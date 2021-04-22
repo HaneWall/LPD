@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # parameter
 lamb = 800e-09
 k_0 = 2*np.pi / lamb
-N_lambda = 60
+N_lambda = 100
 dz = lamb / N_lambda
 eps_si = 1.4533 ** 2
 Nz = 110
