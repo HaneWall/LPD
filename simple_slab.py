@@ -46,10 +46,11 @@ def plot_results(varying_d, dz):
     z = varying_d * dz
     axes[0].tick_params(direction='in', bottom=True, left=True, right=True, top=True)
     axes[0].grid(True, alpha=0.5, linestyle=':', color='k')
-    axes[0].plot(z, theo_amplitudes, color='red')
-    axes[0].plot(z, amplitudes, marker='o', color='k', mfc='None', ls='None')
+    axes[0].plot(z, theo_amplitudes, color='red', label=r'Theory')
+    axes[0].plot(z, amplitudes, marker='o', color='k', mfc='None', ls='None', label=r'FDTD, $N_{\lambda}$='+'${}$'.format(N_lambda))
     axes[0].set_xlabel('$z$ in m')
     axes[0].set_ylabel('$E_{tr}$')
+    axes[0].legend(ncol=2, fancybox=False, edgecolor='k', bbox_to_anchor=(0, 1), loc=3)
 
     axes[1].tick_params(direction='in', bottom=True, left=True, right=True, top=True)
     axes[1].grid(True, alpha=0.5, linestyle=':', color='k')

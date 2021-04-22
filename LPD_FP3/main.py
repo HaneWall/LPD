@@ -2,6 +2,7 @@ import numpy as np
 from .constants import c0, mu0, eps0
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from tqdm import tqdm
 
 class Grid:
     '''
@@ -75,7 +76,7 @@ class Grid:
             fig, axes = plt.subplots(dpi=75)
         self.timesteps = timesteps
 
-        for timestep in range(self.timesteps):
+        for timestep in tqdm(range(1, self.timesteps + 1)):
             self.update()
             self.timesteps_passed += 1
             if ani and (self.timesteps_passed%5==0):
