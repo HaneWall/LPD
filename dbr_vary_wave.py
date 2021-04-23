@@ -25,7 +25,7 @@ def run_setup(wavelengths, dz, grid_cells, n_l, n_h, d_l_idx, d_h_idx, number_of
 
 
 def plot_reflectivity(amplitude_matrix, wavelengths):
-        fig, axes = plt.subplots()
+        fig, axes = plt.subplots(figsize=(6, 5))
         plt.rcParams.update({
             "text.usetex": True,
             "font.family": "serif",
