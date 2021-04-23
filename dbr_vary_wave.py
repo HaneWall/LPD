@@ -33,17 +33,17 @@ def plot_reflectivity(amplitude_matrix, wavelengths):
         })
         axes.tick_params(direction='in', bottom=True, left=True, right=True, top=True)
         axes.grid(True, alpha=0.5, linestyle=':', color='k')
-        axes.plot(wavelengths*10**9, 1 - amplitude_matrix[0]**2, linestyle='-', color='red',
-                  label='2 layer')
-        axes.plot(wavelengths*10**9, 1 - amplitude_matrix[1]**2, linestyle='-', color='k',
-                  label='10 layer')
+        axes.plot(wavelengths*10**9, 1 - amplitude_matrix[0]**2, linestyle='-', linewidth=0.3, marker='o', markersize=0.5, mfc='None', color='red',
+                  label='2 layer pairs')
+        axes.plot(wavelengths*10**9, 1 - amplitude_matrix[1]**2, linestyle='-', linewidth=0.3, marker='o', markersize=0.5, mfc='None', color='k',
+                  label='10 layer pairs')
         axes.set_xlabel(r'$\lambda$'+' in nm')
         axes.set_ylabel(r'$R$')
         axes.legend(ncol=3, fancybox=False, edgecolor='k', bbox_to_anchor=(0, 1), loc=3)
         plt.show()
 
 # parameters
-dz = 0.8e-9
+dz = 1e-9
 n_l = 1.453
 n_h = 2.519
 wavelength_guided = 800e-09
@@ -53,17 +53,23 @@ d_l_idx = int(np.floor(length_l / dz))
 d_h_idx = int(np.floor(length_h / dz))
 arr_number_of_pairs = np.array([2, 10])
 grid_cells = (1 + arr_number_of_pairs)*(d_l_idx + d_h_idx)
-print(grid_cells)
-wavelengths = np.arange(400e-09, 1200e-09, 2e-09)
+wavelengths = np.arange(400e-09, 1204e-09, 1e-09)
 
-amplitude_matrix = np.zeros((len(arr_number_of_pairs), len(wavelengths)))
+
+# calculate
+'''amplitude_matrix = np.zeros((len(arr_number_of_pairs), len(wavelengths)))
 
 for idx in range(len(arr_number_of_pairs)):
     if idx == 0:
-        amplitude_matrix[idx][:] = run_setup(wavelengths, dz, grid_cells[idx], n_l, n_h, d_l_idx, d_h_idx, arr_number_of_pairs[idx], timesteps=20000)
+        amplitude_matrix[idx][:] = run_setup(wavelengths, dz, grid_cells[idx], n_l, n_h, d_l_idx, d_h_idx, arr_number_of_pairs[idx], timesteps=40000)
     else:
         amplitude_matrix[idx][:] = run_setup(wavelengths, dz, grid_cells[idx], n_l, n_h, d_l_idx, d_h_idx,
-                                             arr_number_of_pairs[idx], timesteps=100000)
+                                             arr_number_of_pairs[idx], timesteps=180000)
+'''
+
+# load data
+file_name = '1em09_180000ts.npy'
+amplitude_matrix = np.load('./LPD_FP3/saved_data/vary_wave_dbr/' + file_name)
 
 plot_reflectivity(amplitude_matrix, wavelengths)
 
