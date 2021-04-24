@@ -37,7 +37,7 @@ def run_setup(thickness_in_dz):
     return s_grid.observers[0].amplitude, s_grid.observers[0].phase, theo_ampl, theo_phase
 
 def plot_results(varying_d, dz):
-    fig, axes = plt.subplots(2)
+    fig, axes = plt.subplots(2, figsize=(6, 5))
     plt.rcParams.update({
         "text.usetex": True,
         "font.family": "serif",

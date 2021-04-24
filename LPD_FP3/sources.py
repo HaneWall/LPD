@@ -24,11 +24,12 @@ class Ramped_Sin(ParentSource):
     weiches Sinussignal, welches mit sin**2 aktiviert wird
     '''
 
-    def __init__(self, wavelength, carrier_wavelength, amplitude):
+    def __init__(self, wavelength, carrier_wavelength, amplitude, tfsf=False):
         super().__init__()
         self.lamb = wavelength
         self.carrier_lamb = carrier_wavelength
         self.ampl = amplitude
+        self.tfsf = tfsf
 
     @property
     def carrier_omega(self):
@@ -48,3 +49,16 @@ class Ramped_Sin(ParentSource):
 
         else:
             self.grid.Ex[self.position] += self.ampl * np.sin(self.omega * self.grid.timesteps_passed * self.grid.dt)
+
+    def step_By(self):
+        if self.tfsf == False:
+            pass
+
+        else:
+            if self.carrier_omega * self.grid.timesteps_passed * self.grid.dt < np.pi / 2:
+                self.grid.By[self.position - 1] += 1/c0 * self.ampl * (np.sin(self.carrier_omega * (self.grid.timesteps_passed - 1) * self.grid.dt))**2 * np.sin(self.omega * (self.grid.timesteps_passed - 1) * self.grid.dt)
+            else:
+                self.grid.By[self.position - 1] += 1/c0 * self.ampl * np.sin(self.omega * (self.grid.timesteps_passed - 1) * self.grid.dt)
+
+
+

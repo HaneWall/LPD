@@ -128,6 +128,7 @@ class Grid:
 
         for src in self.sources:
             src.step_Ex()
+            src.step_By()
 
         for bound in self.boundaries:
             bound.step_Ex()
