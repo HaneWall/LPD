@@ -34,7 +34,10 @@ def theory_dielectric_slab(grid):
     k0 = grid.sources[0].omega / c0
     k = n*k0
     q = ((n - 1) ** 2) / ((n + 1) ** 2) * np.exp(2j * k * d)
-    e_inc = grid.sources[0].ampl
+    if grid.sources[0].tfsf:
+        e_inc = 2*grid.sources[0].ampl
+    else:
+        e_inc = grid.sources[0].ampl
     e_tr = e_inc * (2 / (n + 1)) * (2 * n / (n + 1)) * (1 / (1 - q)) * np.exp(1j * (k - k0) * d)
     theo_amplitude = np.abs(e_tr)
     theo_phasenunterschied = np.angle(e_tr)
