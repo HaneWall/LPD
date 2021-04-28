@@ -26,6 +26,7 @@ class Grid:
         self.Ex = np.zeros(Nz)
         self.By = np.zeros(Nz)
         self.Px = np.zeros(Nz)
+        self.Px_mem = np.zeros(Nz)
 
         self.timesteps = None
         self.timesteps_passed = 0
@@ -53,6 +54,11 @@ class Grid:
     def cb(self):
         return (c0 ** 2 * self.dt) / (self.eps * self.dz) / (1 + (self.sigma * self.dt) / (2 * eps0 * self.eps))
 
+    @property
+    def cc(self):
+        return 1 / (eps0 * (1 + (self.sigma * self.dt) / (2 * eps0 * self.eps)))
+
+
     def curl_By(self):
         return (self.By[1:self.Nz] - self.By[0:self.Nz - 1])
 
@@ -60,7 +66,7 @@ class Grid:
         return (self.Ex[1:self.Nz] - self.Ex[0:self.Nz-1])
 
     def step_Ex(self):
-        self.Ex[1:self.Nz] = self.ca[1:self.Nz] * self.Ex[1:self.Nz] - self.cb[1:self.Nz] * self.curl_By()
+        self.Ex[1:self.Nz] = self.ca[1:self.Nz] * self.Ex[1:self.Nz] - self.cb[1:self.Nz] * self.curl_By() - self.cc[1:self.Nz]*(self.Px[1:self.Nz] - self.Px_mem[1:self.Nz])
 
     def step_By(self):
         self.By[0:self.Nz-1] = self.By[0:self.Nz-1] - self.dt / self.dz * self.curl_Ex()
@@ -120,11 +126,10 @@ class Grid:
             plt.show()
 
     def update(self):
-        #for mat in self.materials:
-        #   mat.step_P()
+        for mat in self.materials:
+            mat.step_Px()
 
         self.step_Ex()
-        #print(self.Ex)
 
         for src in self.sources:
             src.step_Ex()

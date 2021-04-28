@@ -1,4 +1,7 @@
+import numpy as np
+from cached_property import cached_property
 from .utils import _create_array_from_slice
+from .constants import c0, mu0, eps0, me, q
 
 class Vacuum:
     '''
@@ -35,19 +38,13 @@ class Vacuum:
         else:
             raise KeyError('Currently not supporting these kind of keys! Use slice or simple index.')
 
-    def step_P(self):
+    def step_Px(self):
         '''
         polarization
         :return:
         '''
         pass
 
-    def step_J_p(self):
-        '''
-        polarization current
-        :return:
-        '''
-        pass
 
 class NonDispersive(Vacuum):
     '''
@@ -67,3 +64,54 @@ class NonDispersive(Vacuum):
 
     def epsilon_complex(self, omega):
         return self.eps
+
+class DrudeMaterial(Vacuum):
+    '''
+    Material welches dispersives Verhalten aufweist, -> complex epsilon
+    '''
+
+    def __init__(self, name, eps_inf, gamma, number_density):
+        super().__init__()
+        self.material_name = name
+        self.eps = 1
+        self.eps_inf = eps_inf
+        self.gamma = gamma
+        self.plasma_freq = np.sqrt((number_density * q ** 2) / (eps0 * me))
+        print(self.plasma_freq)
+        self.P_memory = None
+
+    def _allocate_Px(self):
+        self.Px = np.zeros(len(self.position), len(self.position)) # Speicher für timestep [n-1/2, n-3/2]
+
+    def epsilon_comlex(self, omega):
+        return self.eps_inf - self.plasma_freq ** 2 / (omega ** 2 + 1j * omega * self.gamma)
+
+    def epsilon_real(self, omega):
+        return np.real(self.epsilon_comlex(omega))
+
+    def epsilon_imag(self, omega):
+        return np.imag(self.epsilon_comlex(omega))
+
+
+    # folgende Werte werden nur einmal berechnet (kann nicht in init durchgeführt werden, da dort Objekt noch nicht
+    # vollständig in grid platziert -> keine Kenntnis über dt)
+    @cached_property
+    def da(self):
+        da = (1/(self.grid.dt ** 2) + self.gamma/(2 * self.grid.dt))
+        return da
+
+    @cached_property
+    def db(self):
+        db = (1/(self.grid.dt ** 2) - self.gamma/(2 * self.grid.dt))
+        return db
+
+    def step_Px(self):
+        if self.P_memory is None:
+            self.P_memory = np.zeros((len(self.position), len(self.position)))
+        self.grid.Px_mem[self.position[0]:(self.position[-1] + 1)] = self.grid.Px[self.position[0]:(self.position[-1] + 1)]
+        self.grid.Px[self.position[0]:(self.position[-1] + 1)] = (eps0 * self.plasma_freq ** 2)/self.da * self.grid.Ex[self.position[0]:(self.position[-1] + 1)] \
+                                                                 + 2/(self.grid.dt ** 2 * self.da) * self.grid.Px[self.position[0]:(self.position[-1] + 1)] \
+                                                                 - self.db/self.da * self.P_memory[1]
+
+        self.P_memory[1] = self.P_memory[0]
+        self.P_memory[0] = self.grid.Px[self.position[0]:(self.position[-1] + 1)]
