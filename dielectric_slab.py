@@ -9,19 +9,19 @@ Platzhalter für Drude Slab
 
 lamb = 800e-09
 k_0 = 2*np.pi / lamb
-N_lambda = 140
+N_lambda = 100
 dz = lamb / N_lambda
 eps_si = 1.4533 ** 2
-Nz = 200
+Nz = 250
 src_ind = 2
 obs_ind = Nz - 3
 timesteps = 15000
 
 #number_density=5.86e28
-number_density=1e27
-gamma=6e13
+number_density = 1e27
+gamma = 6e13
 
-varying_d = np.arange(2, 150, 1)
+varying_d = np.arange(2, 200, 2)
 amplitudes = np.zeros(len(varying_d))
 phases = np.zeros(len(varying_d))
 theo_amplitudes = np.zeros(len(varying_d))
@@ -53,16 +53,16 @@ def plot_results(varying_d, dz):
     z = varying_d * dz
     axes[0].tick_params(direction='in', bottom=True, left=True, right=True, top=True)
     axes[0].grid(True, alpha=0.5, linestyle=':', color='k')
-    axes[0].plot(z, theo_amplitudes, color='red', label=r'Theory')
     axes[0].plot(z, amplitudes, marker='o', color='k', mfc='None', ls='None', label=r'FDTD, $N_{\lambda}$='+'${}$'.format(N_lambda))
+    axes[0].plot(z, theo_amplitudes, color='red', label=r'Theory')
     axes[0].set_xlabel('$z$ in m')
     axes[0].set_ylabel('$E_{tr}$')
     axes[0].legend(ncol=2, fancybox=False, edgecolor='k', bbox_to_anchor=(0, 1), loc=3)
 
     axes[1].tick_params(direction='in', bottom=True, left=True, right=True, top=True)
     axes[1].grid(True, alpha=0.5, linestyle=':', color='k')
-    axes[1].plot(z, theo_phases, color='red')
     axes[1].plot(z, phases, marker='o', color='k', mfc='None', ls='None')
+    axes[1].plot(z, theo_phases, color='red')
     axes[1].set_xlabel('$z$ in m')
     axes[1].set_ylabel('$\phi$')
     plt.subplots_adjust(hspace=0)
