@@ -69,7 +69,7 @@ def plot_results(gammas, varying_d, dz):
         amplitudes[g_idx, d_idx], phases[g_idx, d_idx], theo_amplitudes[g_idx, d_idx], theo_phases[g_idx, d_idx] = run_setup(d, gamma)
         phases[g_idx, d_idx] += np.angle(np.exp(-1j*k_0 * (obs_ind - src_ind) * dz))
 '''
-
+# loading data from computation above
 amplitudes = np.load(file='./LPD_FP3/saved_data/dielectric_slab/diel_slab_gamma_variation_fdtd.npy')
 theo_amplitudes = np.load(file='./LPD_FP3/saved_data/dielectric_slab/diel_slab_gamma_variation_theo.npy')
 
